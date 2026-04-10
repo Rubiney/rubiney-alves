@@ -34,7 +34,7 @@ export default function Contato() {
             {/* Contact items */}
             <div className="flex flex-col gap-5">
               <a
-                href="mailto:rubiney.melo@gmail.com"
+                href="mailto:sr.rubiney@gmail.com"
                 className="flex items-center gap-4 group"
               >
                 <div
@@ -49,13 +49,13 @@ export default function Contato() {
                     className="text-sm transition-colors duration-200 group-hover:underline"
                     style={{ color: "var(--cream)" }}
                   >
-                    rubiney.melo@gmail.com
+                    sr.rubiney@gmail.com
                   </p>
                 </div>
               </a>
 
               <a
-                href="tel:+5596991373225"
+                href="https://wa.me/5596991373225"
                 className="flex items-center gap-4 group"
               >
                 <div
@@ -76,7 +76,7 @@ export default function Contato() {
               </a>
 
               <a
-                href="https://linkedin.com/in/rubiney"
+                href="https://linkedin.com/in/rubineyalves"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 group"
@@ -177,3 +177,6 @@ export default function Contato() {
     </section>
   );
 }
+
+
+
