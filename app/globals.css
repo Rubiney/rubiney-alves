@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --navy-deep:   #0c1825;
+  --navy-card:   #162234;
+  --gold:        #e8a020;
+  --gold-light:  #f0b030;
+  --cream:       #f2ede6;
+  --cream-muted: rgba(242, 237, 230, 0.55);
+  --cream-faint: rgba(242, 237, 230, 0.25);
+  --gold-muted:  rgba(232, 160, 32, 0.30);
+  --steel:       #5b8fc9;
+}
+
+@theme inline {
+  --color-navy:       var(--navy-deep);
+  --color-navy-card:  var(--navy-card);
+  --color-gold:       var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-cream:      var(--cream);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--navy-deep);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Gold divider line */
+.gold-line {
+  width: 36px;
+  height: 1px;
+  background: var(--gold-muted);
+}
+
+/* Eyebrow label */
+.eyebrow {
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* Section spacing */
+.section {
+  padding: 5rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Gold CTA button */
+.btn-gold {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  transition: background-color 0.25s, color 0.25s;
+}
+.btn-gold:hover {
+  background-color: var(--gold);
+  color: var(--navy-deep);
+}
+
+/* Nav link hover */
+.nav-link {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream-muted);
+  transition: color 0.2s;
+}
+.nav-link:hover {
+  color: var(--gold);
+}
