@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'CGR';
+  src: local('CormorantGaramond-Regular'),
+       local('Cormorant Garamond Regular'),
+       local('Cormorant Garamond');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --navy-deep:   #0c1825;
   --navy-card:   #162234;
