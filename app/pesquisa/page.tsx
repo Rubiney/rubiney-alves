@@ -31,9 +31,10 @@ const agora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', mi
 type Notas = Record<string, number>
 
 interface FormData {
-  drogaria:        string
-  bairro:          string
-  horaAtendimento: string
+  drogaria:         string
+  bairro:           string
+  dataAtendimento:  string
+  horaAtendimento:  string
   notas:           Notas
   problema:        string
   observacoes:     string
@@ -58,7 +59,7 @@ function mensagemMedia(media: number): { texto: string; cor: string } {
 
 export default function Pesquisa() {
   const [form, setForm] = useState<FormData>({
-    drogaria: '', bairro: '', horaAtendimento: '', notas: {}, problema: '', observacoes: '',
+    drogaria: '', bairro: '', dataAtendimento: '', horaAtendimento: '', notas: {}, problema: '', observacoes: '',
     ticketAlto: '', notaCusto: 0,
     maisde3med: '',
     disponivel: '', notaDisponib: 0,
@@ -158,6 +159,11 @@ export default function Pesquisa() {
                 onChange={e => set('drogaria', e.target.value)} />
             </Campo>
             <p style={s.hint}>Ex: farmácia verde · "Saúde é tudo" · esquina da Av. FAB com Rua Cândido Mendes</p>
+            <Campo label="Data do atendimento (opcional)">
+              <input style={s.input} type="date"
+                value={form.dataAtendimento}
+                onChange={e => set('dataAtendimento', e.target.value)} />
+            </Campo>
             <Campo label="Horário de atendimento (opcional)">
               <input style={s.input} type="time"
                 value={form.horaAtendimento}
