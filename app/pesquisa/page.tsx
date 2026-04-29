@@ -25,7 +25,10 @@ const PROBLEMAS = [
   'Outro',
 ]
 
-const hoje = () => new Date().toLocaleDateString('pt-BR')
+const hoje = () => {
+  const d = new Date()
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+}
 
 type Notas = Record<string, number>
 
