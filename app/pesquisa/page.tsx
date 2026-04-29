@@ -159,16 +159,31 @@ export default function Pesquisa() {
                 onChange={e => set('drogaria', e.target.value)} />
             </Campo>
             <p style={s.hint}>Ex: farmácia verde · "Saúde é tudo" · esquina da Av. FAB com Rua Cândido Mendes</p>
-            <Campo label="Data do atendimento (opcional)">
-              <input style={s.input} type="date"
-                value={form.dataAtendimento}
-                onChange={e => set('dataAtendimento', e.target.value)} />
-            </Campo>
-            <Campo label="Horário de atendimento (opcional)">
-              <input style={s.input} type="time"
-                value={form.horaAtendimento}
-                onChange={e => set('horaAtendimento', e.target.value)} />
-            </Campo>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <Campo label="Data do atendimento">
+                <input style={{ ...s.input, textAlign: 'center' }}
+                  placeholder="DD/MM/AAAA"
+                  maxLength={10}
+                  value={form.dataAtendimento}
+                  onChange={e => {
+                    let v = e.target.value.replace(/\D/g,'')
+                    if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2)
+                    if (v.length > 5) v = v.slice(0,5) + '/' + v.slice(5)
+                    set('dataAtendimento', v)
+                  }} />
+              </Campo>
+              <Campo label="Horário">
+                <input style={{ ...s.input, textAlign: 'center' }}
+                  placeholder="HH:MM"
+                  maxLength={5}
+                  value={form.horaAtendimento}
+                  onChange={e => {
+                    let v = e.target.value.replace(/\D/g,'')
+                    if (v.length > 2) v = v.slice(0,2) + ':' + v.slice(2)
+                    set('horaAtendimento', v)
+                  }} />
+              </Campo>
+            </div>
             <Campo label="Bairro *">
               <input style={s.input} required
                 placeholder="Ex: Central"
