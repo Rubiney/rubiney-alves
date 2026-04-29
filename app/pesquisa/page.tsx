@@ -25,16 +25,15 @@ const PROBLEMAS = [
   'Outro',
 ]
 
-const hoje = () => {
-  const d = new Date()
-  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-}
+const hoje  = () => new Date().toLocaleDateString('pt-BR')
+const agora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 
 type Notas = Record<string, number>
 
 interface FormData {
   drogaria:        string
   bairro:          string
+  horaAtendimento: string
   notas:           Notas
   problema:        string
   observacoes:     string
@@ -59,7 +58,7 @@ function mensagemMedia(media: number): { texto: string; cor: string } {
 
 export default function Pesquisa() {
   const [form, setForm] = useState<FormData>({
-    drogaria: '', bairro: '', notas: {}, problema: '', observacoes: '',
+    drogaria: '', bairro: '', horaAtendimento: '', notas: {}, problema: '', observacoes: '',
     ticketAlto: '', notaCusto: 0,
     maisde3med: '',
     disponivel: '', notaDisponib: 0,
@@ -85,7 +84,7 @@ export default function Pesquisa() {
       const res = await fetch('/api/pesquisa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, data: hoje() }),
+        body: JSON.stringify({ ...form, data: hoje(), horaResposta: agora() }),
       })
       if (!res.ok) throw new Error()
       setMediaFinal(mediaNotas(form.notas))
@@ -135,7 +134,7 @@ export default function Pesquisa() {
           <p style={s.eyebrow}>Pesquisa Acadêmica</p>
           <h1 style={s.title}>Termômetro de Atendimento</h1>
           <p style={s.subtitle}>Varejo Farmacêutico · Macapá – AP</p>
-          <p style={s.author}>Rubiney Alves · {hoje()}</p>
+          <p style={s.author}>Rubiney Alves · {hoje()} · {agora()}</p>
         </div>
 
         {/* Barra de progresso */}
@@ -159,6 +158,11 @@ export default function Pesquisa() {
                 onChange={e => set('drogaria', e.target.value)} />
             </Campo>
             <p style={s.hint}>Ex: farmácia verde · "Saúde é tudo" · esquina da Av. FAB com Rua Cândido Mendes</p>
+            <Campo label="Horário de atendimento (opcional)">
+              <input style={s.input} type="time"
+                value={form.horaAtendimento}
+                onChange={e => set('horaAtendimento', e.target.value)} />
+            </Campo>
             <Campo label="Bairro *">
               <input style={s.input} required
                 placeholder="Ex: Central"
