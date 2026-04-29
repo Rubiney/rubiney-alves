@@ -30,11 +30,16 @@ const hoje = () => new Date().toLocaleDateString('pt-BR')
 type Notas = Record<string, number>
 
 interface FormData {
-  drogaria: string
-  bairro: string
-  notas: Notas
-  problema: string
-  observacoes: string
+  drogaria:        string
+  bairro:          string
+  notas:           Notas
+  problema:        string
+  observacoes:     string
+  ticketAlto:      string   // 'sim' | 'nao' | ''
+  notaCusto:       number
+  maisde3med:      string   // 'sim' | 'nao' | ''
+  disponivel:      string   // 'sim' | 'as_vezes' | 'nao' | ''
+  notaDisponib:    number
 }
 
 function mediaNotas(notas: Notas): number {
@@ -44,38 +49,35 @@ function mediaNotas(notas: Notas): number {
 }
 
 function mensagemMedia(media: number): { texto: string; cor: string } {
-  if (media >= 4) return { texto: 'Excelente atendimento!', cor: '#4ade80' }
-  if (media >= 3) return { texto: 'Atendimento regular.', cor: '#facc15' }
-  return { texto: 'Atendimento precisa melhorar.', cor: '#f87171' }
+  if (media >= 4) return { texto: 'Excelente atendimento!',          cor: '#4ade80' }
+  if (media >= 3) return { texto: 'Atendimento regular.',            cor: '#facc15' }
+  return               { texto: 'Atendimento precisa melhorar.',     cor: '#f87171' }
 }
 
 export default function Pesquisa() {
   const [form, setForm] = useState<FormData>({
-    drogaria: '',
-    bairro: '',
-    notas: {},
-    problema: '',
-    observacoes: '',
+    drogaria: '', bairro: '', notas: {}, problema: '', observacoes: '',
+    ticketAlto: '', notaCusto: 0,
+    maisde3med: '',
+    disponivel: '', notaDisponib: 0,
   })
-  const [enviado, setEnviado]   = useState(false)
-  const [enviando, setEnviando] = useState(false)
-  const [erro, setErro]         = useState('')
+  const [enviado, setEnviado]     = useState(false)
+  const [enviando, setEnviando]   = useState(false)
+  const [erro, setErro]           = useState('')
   const [mediaFinal, setMediaFinal] = useState(0)
 
+  const set = (k: keyof FormData, v: string | number) =>
+    setForm(f => ({ ...f, [k]: v }))
   const setNota = (key: string, val: number) =>
     setForm(f => ({ ...f, notas: { ...f.notas, [key]: val } }))
 
-  const preenchidos   = CRITERIOS.filter(c => form.notas[c.key]).length
+  const preenchidos    = CRITERIOS.filter(c => form.notas[c.key]).length
   const notasCompletas = preenchidos === CRITERIOS.length
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!notasCompletas) {
-      setErro('Avalie todos os critérios antes de enviar.')
-      return
-    }
-    setErro('')
-    setEnviando(true)
+    if (!notasCompletas) { setErro('Avalie todos os critérios antes de enviar.'); return }
+    setErro(''); setEnviando(true)
     try {
       const res = await fetch('/api/pesquisa', {
         method: 'POST',
@@ -91,28 +93,24 @@ export default function Pesquisa() {
     setEnviando(false)
   }
 
-  // — Tela de resultado (B + C) —
+  // — Tela de resultado —
   if (enviado) {
     const { texto, cor } = mensagemMedia(mediaFinal)
-    const estrelasTela = Math.round(mediaFinal)
     return (
       <div style={s.thanks}>
         <div style={s.thanksBadge}>✓</div>
         <h2 style={s.thanksTitle}>Avaliação registrada!</h2>
-
         <div style={s.scoreBox}>
           <p style={{ ...s.scoreMsg, color: cor }}>{texto}</p>
           <div style={s.scorStars}>
             {[1,2,3,4,5].map(n => (
-              <span key={n} style={{ fontSize: 32, color: n <= estrelasTela ? '#C9A84C' : '#1e2e50' }}>★</span>
+              <span key={n} style={{ fontSize: 32, color: n <= Math.round(mediaFinal) ? '#C9A84C' : '#1e2e50' }}>★</span>
             ))}
           </div>
           <p style={s.scoreNum}>{mediaFinal.toFixed(1)} / 5.0</p>
         </div>
-
         <p style={s.thanksText}>Obrigado pela sua participação.</p>
         <p style={s.thanksSmall}>Varejo Farmacêutico · Macapá–AP</p>
-
         <a href="https://rubiney-alves.vercel.app" style={s.backLink}>
           ← Conheça o trabalho de Rubiney Alves
         </a>
@@ -123,13 +121,8 @@ export default function Pesquisa() {
   // — Formulário —
   return (
     <>
-      {/* D) CSS da animação de pulso */}
       <style>{`
-        @keyframes pulso {
-          0%   { transform: scale(1); }
-          40%  { transform: scale(1.35); }
-          100% { transform: scale(1); }
-        }
+        @keyframes pulso { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
         .estrela-ativa { animation: pulso 0.25s ease; }
       `}</style>
 
@@ -142,35 +135,87 @@ export default function Pesquisa() {
           <p style={s.author}>Rubiney Alves · {hoje()}</p>
         </div>
 
-        {/* A) Barra de progresso */}
+        {/* Barra de progresso */}
         <div style={s.progressWrap}>
           <div style={s.progressBar}>
             <div style={{ ...s.progressFill, width: `${(preenchidos / CRITERIOS.length) * 100}%` }} />
           </div>
           <p style={s.progressText}>
-            {preenchidos} de {CRITERIOS.length} critérios avaliados
-            {notasCompletas ? ' ✓' : ''}
+            {preenchidos} de {CRITERIOS.length} critérios avaliados{notasCompletas ? ' ✓' : ''}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} style={s.form}>
 
+          {/* Identificação */}
           <Secao label="Identificação da Farmácia">
             <Campo label="Como identificar a farmácia? (opcional)">
               <input style={s.input}
                 placeholder="Nome, cor, slogan, esquina com..."
                 value={form.drogaria}
-                onChange={e => setForm(f => ({ ...f, drogaria: e.target.value }))} />
+                onChange={e => set('drogaria', e.target.value)} />
             </Campo>
             <p style={s.hint}>Ex: farmácia verde · "Saúde é tudo" · esquina da Av. FAB com Rua Cândido Mendes</p>
             <Campo label="Bairro *">
               <input style={s.input} required
                 placeholder="Ex: Central"
                 value={form.bairro}
-                onChange={e => setForm(f => ({ ...f, bairro: e.target.value }))} />
+                onChange={e => set('bairro', e.target.value)} />
             </Campo>
           </Secao>
 
+          {/* Perfil de Compra */}
+          <Secao label="Perfil de Compra">
+
+            <Campo label="Você gasta R$ 150 ou mais por mês nesta farmácia?">
+              <RadioGroup
+                value={form.ticketAlto}
+                onChange={v => set('ticketAlto', v)}
+                options={[{ value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' }]}
+              />
+            </Campo>
+            {form.ticketAlto && (
+              <Campo label="Como avalia o custo-benefício desta farmácia?">
+                <EstrelasRow
+                  label=""
+                  value={form.notaCusto}
+                  onChange={v => set('notaCusto', v)}
+                />
+              </Campo>
+            )}
+
+            <Campo label="Você compra mais de 3 medicamentos regularmente?">
+              <RadioGroup
+                value={form.maisde3med}
+                onChange={v => set('maisde3med', v)}
+                options={[{ value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' }]}
+              />
+            </Campo>
+
+            <Campo label="Os produtos que você procurou estavam disponíveis?">
+              <RadioGroup
+                value={form.disponivel}
+                onChange={v => set('disponivel', v)}
+                options={[
+                  { value: 'sim',      label: 'Sim' },
+                  { value: 'as_vezes', label: 'Às vezes' },
+                  { value: 'nao',      label: 'Não' },
+                ]}
+              />
+            </Campo>
+            {form.disponivel && (
+              <Campo label="Como avalia a disponibilidade de estoque?">
+                <EstrelasRow
+                  label=""
+                  value={form.notaDisponib}
+                  onChange={v => set('notaDisponib', v)}
+                />
+              </Campo>
+            )}
+
+          </Secao>
+
+          {/* Critérios */}
           <Secao label="Avaliação dos Critérios">
             <p style={s.hint}>Toque nas estrelas · 1 = péssimo · 5 = excelente</p>
             {CRITERIOS.map(c => (
@@ -183,19 +228,21 @@ export default function Pesquisa() {
             ))}
           </Secao>
 
+          {/* Problema */}
           <Secao label="Principal Problema Observado">
             <select style={s.select} value={form.problema}
-              onChange={e => setForm(f => ({ ...f, problema: e.target.value }))}>
+              onChange={e => set('problema', e.target.value)}>
               <option value="">Selecione...</option>
               {PROBLEMAS.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
           </Secao>
 
+          {/* Observações */}
           <Secao label="Observações Livres">
             <textarea style={s.textarea} rows={4}
               placeholder="Descreva o que observou durante a visita..."
               value={form.observacoes}
-              onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))} />
+              onChange={e => set('observacoes', e.target.value)} />
           </Secao>
 
           {erro && <p style={s.erro}>{erro}</p>}
@@ -214,6 +261,8 @@ export default function Pesquisa() {
   )
 }
 
+// — Componentes —
+
 function Secao({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={s.secao}>
@@ -226,25 +275,55 @@ function Secao({ label, children }: { label: string; children: React.ReactNode }
 function Campo({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={s.campo}>
-      <label style={s.campoLabel}>{label}</label>
+      {label && <label style={s.campoLabel}>{label}</label>}
       {children}
     </div>
   )
 }
 
-function EstrelasRow({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
-  const [hover, setHover]       = useState(0)
-  const [pulsou, setPulsou]     = useState(0)
+function RadioGroup({ value, onChange, options }: {
+  value: string
+  onChange: (v: string) => void
+  options: { value: string; label: string }[]
+}) {
+  return (
+    <div style={s.radioGroup}>
+      {options.map(o => (
+        <button
+          key={o.value}
+          type="button"
+          onClick={() => onChange(o.value)}
+          style={{
+            ...s.radioBtn,
+            background:   value === o.value ? '#C9A84C' : '#0a1428',
+            color:        value === o.value ? '#0D1B3E' : '#8a9ab8',
+            border:       value === o.value ? '1px solid #C9A84C' : '1px solid #1e2e50',
+            fontWeight:   value === o.value ? 700 : 400,
+          }}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function EstrelasRow({ label, value, onChange }: {
+  label: string
+  value: number
+  onChange: (v: number) => void
+}) {
+  const [hover, setHover]   = useState(0)
+  const [pulsou, setPulsou] = useState(0)
 
   const handleClick = (n: number) => {
-    onChange(n)
-    setPulsou(n)
+    onChange(n); setPulsou(n)
     setTimeout(() => setPulsou(0), 260)
   }
 
   return (
-    <div style={s.estrelasRow}>
-      <span style={s.estrelasLabel}>{label}</span>
+    <div style={label ? s.estrelasRow : { ...s.estrelasRow, borderBottom: 'none', paddingTop: 0 }}>
+      {label && <span style={s.estrelasLabel}>{label}</span>}
       <div style={s.estrelas}>
         {[1, 2, 3, 4, 5].map(n => (
           <span
@@ -263,10 +342,11 @@ function EstrelasRow({ label, value, onChange }: { label: string; value: number;
   )
 }
 
+// — Estilos —
+
 const s: Record<string, React.CSSProperties> = {
   page: {
-    maxWidth: 500, margin: '0 auto',
-    padding: '28px 18px 56px',
+    maxWidth: 500, margin: '0 auto', padding: '28px 18px 56px',
     fontFamily: "'Segoe UI', sans-serif",
     background: '#0D1B3E', minHeight: '100vh', color: '#fff',
   },
@@ -278,24 +358,20 @@ const s: Record<string, React.CSSProperties> = {
   title:    { fontSize: 24, fontWeight: 700, color: '#fff', margin: '0 0 6px' },
   subtitle: { fontSize: 14, color: '#8a9ab8', margin: '0 0 4px' },
   author:   { fontSize: 12, color: '#4a5a78' },
-
-  // A) Progresso
   progressWrap: { marginBottom: 24 },
   progressBar:  { height: 6, background: '#0e1c36', borderRadius: 99, overflow: 'hidden', marginBottom: 6 },
   progressFill: { height: '100%', background: '#C9A84C', borderRadius: 99, transition: 'width 0.3s ease' },
   progressText: { fontSize: 12, color: '#8a9ab8', textAlign: 'right', margin: 0 },
-
   form: {},
   secao: { marginBottom: 28 },
   secaoLabel: {
     fontSize: 11, fontWeight: 600, color: '#C9A84C',
     textTransform: 'uppercase', letterSpacing: 1.5,
-    marginBottom: 14, paddingBottom: 6,
-    borderBottom: '1px solid #1a2a4a',
+    marginBottom: 14, paddingBottom: 6, borderBottom: '1px solid #1a2a4a',
   },
   hint: { fontSize: 12, color: '#5a6a88', marginTop: -4, marginBottom: 12 },
-  campo: { marginBottom: 14 },
-  campoLabel: { display: 'block', fontSize: 13, color: '#8a9ab8', marginBottom: 6 },
+  campo: { marginBottom: 16 },
+  campoLabel: { display: 'block', fontSize: 13, color: '#8a9ab8', marginBottom: 8 },
   input: {
     width: '100%', padding: '11px 14px',
     background: '#0a1428', border: '1px solid #1e2e50',
@@ -312,6 +388,12 @@ const s: Record<string, React.CSSProperties> = {
     borderRadius: 8, color: '#fff', fontSize: 14,
     resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit',
   },
+  radioGroup: { display: 'flex', gap: 8, flexWrap: 'wrap' },
+  radioBtn: {
+    padding: '9px 20px', borderRadius: 8,
+    fontSize: 14, cursor: 'pointer',
+    transition: 'all 0.15s', flex: 1,
+  },
   estrelasRow: {
     display: 'flex', justifyContent: 'space-between',
     alignItems: 'center', padding: '10px 0',
@@ -327,8 +409,6 @@ const s: Record<string, React.CSSProperties> = {
     border: 'none', borderRadius: 8, marginTop: 8,
   },
   erro: { color: '#ff6b6b', fontSize: 13, textAlign: 'center', marginBottom: 8 },
-
-  // B + C) Tela de resultado
   thanks: {
     maxWidth: 400, margin: '0 auto',
     textAlign: 'center', fontFamily: "'Segoe UI', sans-serif",
