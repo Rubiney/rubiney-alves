@@ -97,13 +97,14 @@ export default function Pesquisa() {
 
       <form onSubmit={handleSubmit} style={s.form}>
 
-        <Secao label="Identificação da Loja">
-          <Campo label="Nome da drogaria *">
-            <input style={s.input} required
-              placeholder="Ex: Farmácia São Lucas"
+        <Secao label="Identificação da Farmácia">
+          <Campo label="Como identificar a farmácia? (opcional)">
+            <input style={s.input}
+              placeholder="Nome, cor, slogan, esquina com..."
               value={form.drogaria}
               onChange={e => setForm(f => ({ ...f, drogaria: e.target.value }))} />
           </Campo>
+          <p style={s.hint}>Exemplos: farmácia verde · "Saúde é tudo" · esquina da Av. FAB com Rua Cândido Mendes</p>
           <Campo label="Bairro *">
             <input style={s.input} required
               placeholder="Ex: Central"
