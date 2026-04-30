@@ -5,7 +5,7 @@ import Pilares from "./components/Pilares";
 import Aplicacao from "./components/Aplicacao";
 import Trajetoria from "./components/Trajetoria";
 import Experiencia from "./components/Experiencia";
-import Formacao from "./components/Formacao";
+import Fundamento from "./components/Fundamento";
 import Artigos from "./components/Artigos";
 import Contato from "./components/Contato";
 
@@ -20,7 +20,7 @@ export default function Home() {
         <Aplicacao />
         <Trajetoria />
         <Experiencia />
-        <Formacao />
+        <Fundamento />
         <Artigos />
         <Contato />
       </main>

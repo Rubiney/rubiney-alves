@@ -7,7 +7,7 @@ const links = [
   { href: "#aplicacao",  label: "Aplicação" },
   { href: "#trajetoria",  label: "Trajetória" },
   { href: "#experiencia", label: "Experiência" },
-  { href: "#formacao",   label: "Formação" },
+  { href: "#fundamento", label: "Fundamento" },
   { href: "#artigos",    label: "Artigos" },
   { href: "#contato",    label: "Contato" },
 ];
