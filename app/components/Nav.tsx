@@ -8,7 +8,7 @@ const links = [
   { href: "#trajetoria",  label: "Trajetória" },
   { href: "#experiencia", label: "Experiência" },
   { href: "#fundamento", label: "Fundamento" },
-  { href: "#artigos",    label: "Artigos" },
+  { href: "#referencias", label: "Referências" },
   { href: "#contato",    label: "Contato" },
 ];
 

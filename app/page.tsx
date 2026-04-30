@@ -6,7 +6,7 @@ import Aplicacao from "./components/Aplicacao";
 import Trajetoria from "./components/Trajetoria";
 import Experiencia from "./components/Experiencia";
 import Fundamento from "./components/Fundamento";
-import Artigos from "./components/Artigos";
+import Referencias from "./components/Referencias";
 import Contato from "./components/Contato";
 
 export default function Home() {
@@ -21,7 +21,7 @@ export default function Home() {
         <Trajetoria />
         <Experiencia />
         <Fundamento />
-        <Artigos />
+        <Referencias />
         <Contato />
       </main>
     </>
