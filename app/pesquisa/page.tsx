@@ -88,7 +88,7 @@ export default function Pesquisa() {
       `}</style>
       <div style={s.page}>
         <div style={s.header}>
-          <p style={s.eyebrow}>Pesquisa Acadêmica</p>
+          <p style={s.eyebrow}>Diagnóstico de Atendimento em Drogarias</p>
           <h1 style={s.title}>Termômetro de Atendimento</h1>
           <p style={s.subtitle}>Varejo Farmacêutico · Macapá – AP</p>
           <p style={s.author}>Rubiney Alves · {hoje()} · {agora()}</p>
