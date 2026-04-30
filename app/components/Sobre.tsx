@@ -16,44 +16,69 @@ export default function Sobre() {
                 color: "var(--cream)",
               }}
             >
-              Mais de 20 anos construindo{" "}
-              <em style={{ color: "var(--gold)" }}>resultados reais.</em>
+              Transformo atendimento em{" "}
+              <em style={{ color: "var(--gold)" }}>resultado no varejo farmacêutico.</em>
             </h2>
 
             <p
               className="leading-relaxed mb-6"
               style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
             >
-              Profissional comercial com trajetória consolidada no varejo farmacêutico e em
-              segmentos de alto giro. Especialista em vendas consultivas, gestão de equipes de
-              alta performance e tomada de decisão orientada a dados.
+              Atuo diretamente com operação de drogarias, analisando o que realmente acontece
+              no atendimento — não na teoria, mas na prática do dia a dia.
             </p>
+
+            <p
+              className="leading-relaxed mb-3"
+              style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
+            >
+              Na maioria das farmácias, os problemas são os mesmos:
+            </p>
+
+            <ul
+              className="mb-6"
+              style={{
+                fontSize: "0.9rem",
+                color: "var(--cream-muted)",
+                paddingLeft: "1.2rem",
+                lineHeight: "2",
+                listStyleType: "disc",
+              }}
+            >
+              <li>demora no atendimento</li>
+              <li>falta de padrão na equipe</li>
+              <li>baixa orientação ao cliente</li>
+              <li>perda de vendas sem percepção</li>
+            </ul>
 
             <p
               className="leading-relaxed mb-6"
               style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
             >
-              Combina maturidade comercial com capacidade analítica — formação técnica em
-              Sistemas de Informação aliada a múltiplos MBAs em Gestão Estratégica, Marketing,
-              Liderança e Ciência de Dados, sustentando uma visão que equilibra resultado
-              imediato e estratégia de longo prazo.
+              Essas falhas passam despercebidas, mas impactam diretamente a experiência do
+              cliente e o resultado da loja. Com experiência em gestão comercial e vivência no
+              ambiente farmacêutico, meu foco é identificar esses pontos críticos e transformar
+              atendimento em performance.
             </p>
 
             <p
               className="leading-relaxed"
               style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
             >
-              Baseado em Macapá — AP, atua com adaptabilidade a ambientes de alta performance
-              e comprometimento com metas organizacionais.
+              Não se trata apenas de atender bem.{" "}
+              <em style={{ color: "var(--gold)" }}>
+                Trata-se de atender com método, consistência e estratégia.
+              </em>{" "}
+              E é exatamente isso que eu aplico na prática.
             </p>
           </div>
 
           {/* Stats */}
           <div className="flex-shrink-0 grid grid-cols-2 gap-6 content-start">
             {[
-              { num: "+20", label: "Anos de experiência" },
-              { num: "6+",  label: "MBAs e pós-graduações" },
-              { num: "3x",  label: "Promovido internamente" },
+              { num: "+20",  label: "Anos de experiência" },
+              { num: "6+",   label: "MBAs e pós-graduações" },
+              { num: "3x",   label: "Promovido internamente" },
               { num: "360°", label: "Visão comercial & dados" },
             ].map((s) => (
               <div
