@@ -1,139 +1,169 @@
-const criterios = [
-  "Tempo de atendimento",
-  "Qualidade da abordagem ao cliente",
-  "Organização e limpeza da loja",
-  "Clareza nas orientações",
-  "Atendimento farmacêutico",
-  "Execução de serviços clínicos",
+const pilares = [
+  {
+    title: "DECISÃO",
+    icon: "◈",
+    desc: "Liderança baseada em dados e análise criteriosa. Cada decisão sustentada por inteligência comercial e visão estratégica.",
+  },
+  {
+    title: "PROCESSO",
+    icon: "◇",
+    desc: "Estruturação de rotinas de alta performance. Metodologias que transformam esforço individual em resultado coletivo consistente.",
+  },
+  {
+    title: "RESULTADO",
+    icon: "◆",
+    desc: "Entrega mensurável acima do padrão. Comprometimento com metas e geração de valor real para clientes, equipes e organização.",
+  },
+];
+
+const passos = [
+  {
+    num: "01",
+    title: "Observação da experiência do cliente",
+    desc: "Avaliação de tempo de atendimento, abordagem e condução da venda.",
+  },
+  {
+    num: "02",
+    title: "Análise do atendimento farmacêutico",
+    desc: "Verificação da qualidade da orientação, segurança e clareza das informações.",
+  },
+  {
+    num: "03",
+    title: "Avaliação da operação da loja",
+    desc: "Organização, limpeza, facilidade de encontrar produtos e fluxo de atendimento.",
+  },
+  {
+    num: "04",
+    title: "Identificação dos pontos críticos",
+    desc: "Mapeamento das falhas que geram perda de clientes e impacto nas vendas.",
+  },
+  {
+    num: "05",
+    title: "Direcionamento de melhoria",
+    desc: "Indicação clara do que precisa ser ajustado para melhorar o desempenho.",
+  },
 ];
 
 export default function Pilares() {
   return (
-    <section id="aplicacao" style={{ backgroundColor: "var(--navy-deep)" }}>
+    <section id="metodo" style={{ backgroundColor: "var(--navy-deep)" }}>
       <div className="section">
-        <p className="eyebrow mb-4">Aplicação</p>
-        <div className="gold-line mb-12" />
+        <p className="eyebrow mb-4">Método</p>
+        <div className="gold-line mb-8" />
 
-        <div className="flex flex-col lg:flex-row gap-16 items-start">
+        {/* Intro */}
+        <h2
+          className="mb-6 leading-tight"
+          style={{
+            fontFamily: "var(--font-cormorant)",
+            fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
+            fontWeight: 400,
+            color: "var(--cream)",
+          }}
+        >
+          Como identificar falhas no atendimento e{" "}
+          <em style={{ color: "var(--gold)" }}>transformar isso em resultado</em>
+        </h2>
 
-          {/* Left — texto principal */}
-          <div className="flex-1">
-            <h2
-              className="mb-6 leading-tight"
+        <p
+          className="leading-relaxed mb-4"
+          style={{ fontSize: "0.9rem", color: "var(--cream-muted)", maxWidth: "680px" }}
+        >
+          O atendimento em drogarias não melhora apenas com esforço — melhora com análise.
+          Por isso, utilizo um modelo estruturado que avalia o que realmente impacta a
+          experiência do cliente e as vendas.
+        </p>
+
+        <p
+          className="leading-relaxed mb-8"
+          style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
+        >
+          O processo é simples e direto:
+        </p>
+
+        {/* 5 passos */}
+        <div className="flex flex-col gap-4 mb-12">
+          {passos.map((p) => (
+            <div
+              key={p.num}
+              className="flex gap-6 items-start p-6"
               style={{
-                fontFamily: "var(--font-cormorant)",
-                fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)",
-                fontWeight: 400,
-                color: "var(--cream)",
+                backgroundColor: "var(--navy-card)",
+                borderLeft: "3px solid var(--gold)",
               }}
             >
-              Como o método é{" "}
-              <em style={{ color: "var(--gold)" }}>aplicado na prática</em>
-            </h2>
-
-            <p
-              className="leading-relaxed mb-4"
-              style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
-            >
-              Para transformar análise em resultado, desenvolvi um sistema estruturado
-              de avaliação de drogarias.
-            </p>
-
-            <p
-              className="leading-relaxed mb-10"
-              style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
-            >
-              Esse sistema permite analisar, de forma objetiva, os principais pontos
-              que impactam o atendimento e a experiência do cliente.
-            </p>
-
-            {/* Lista de critérios */}
-            <p
-              className="text-xs font-medium tracking-widest uppercase mb-6"
-              style={{ color: "var(--cream)" }}
-            >
-              Na prática, a avaliação considera:
-            </p>
-
-            <ul className="mb-10" style={{ listStyle: "none", padding: 0, margin: 0 }}>
-              {criterios.map((c) => (
-                <li
-                  key={c}
-                  className="flex items-start gap-3 mb-3"
-                  style={{ fontSize: "0.88rem", color: "var(--cream-muted)" }}
+              <span
+                style={{
+                  fontFamily: "var(--font-cormorant)",
+                  fontSize: "1.8rem",
+                  fontWeight: 600,
+                  color: "var(--gold)",
+                  opacity: 0.6,
+                  lineHeight: 1,
+                  flexShrink: 0,
+                }}
+              >
+                {p.num}
+              </span>
+              <div>
+                <h3
+                  className="mb-1 text-sm font-medium tracking-wide"
+                  style={{ color: "var(--cream)" }}
                 >
-                  <span style={{ color: "var(--gold)", flexShrink: 0, marginTop: 2 }}>◆</span>
-                  {c}
-                </li>
-              ))}
-            </ul>
+                  {p.title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--cream-muted)" }}>
+                  {p.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
 
-            <p
-              className="leading-relaxed mb-4"
-              style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
-            >
-              Cada ponto é avaliado com critérios definidos, permitindo identificar falhas
-              que normalmente passam despercebidas no dia a dia da operação.
-            </p>
+        {/* Fechamento */}
+        <p
+          className="leading-relaxed mb-16"
+          style={{ fontSize: "0.9rem", color: "var(--cream-muted)", maxWidth: "680px" }}
+        >
+          Com esse diagnóstico, é possível sair do{" "}
+          <em style={{ color: "var(--gold)" }}>&ldquo;achismo&rdquo;</em> e tomar decisões
+          baseadas no que realmente acontece no atendimento.{" "}
+          <strong style={{ color: "var(--cream)" }}>
+            Não é sobre opinião. É sobre evidência.
+          </strong>
+        </p>
 
-            <p
-              className="leading-relaxed mb-4"
-              style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
-            >
-              O resultado é uma visão clara do que está funcionando e do que precisa ser ajustado.
-            </p>
-
-            <p
-              className="leading-relaxed mb-4"
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {pilares.map((p) => (
+            <div
+              key={p.title}
+              className="p-8 relative"
               style={{
-                fontSize: "0.9rem",
-                color: "var(--cream-muted)",
-                fontStyle: "italic",
+                backgroundColor: "var(--navy-card)",
+                borderTop: "3px solid var(--gold)",
               }}
             >
-              Não se trata de opinião.
-              <br />
-              É uma análise baseada em estrutura, padrão e observação real.
-            </p>
-
-            <p
-              className="leading-relaxed"
-              style={{ fontSize: "0.9rem", color: "var(--cream-muted)" }}
-            >
-              Esse modelo pode ser utilizado tanto para avaliação individual quanto para
-              análise comparativa entre diferentes drogarias.
-            </p>
-          </div>
-
-          {/* Right — CTA */}
-          <div
-            className="flex-shrink-0 w-full lg:w-72 p-8"
-            style={{
-              backgroundColor: "var(--navy-card)",
-              borderTop: "3px solid var(--gold)",
-            }}
-          >
-            <p
-              className="text-xs font-medium tracking-widest uppercase mb-4"
-              style={{ color: "var(--gold)" }}
-            >
-              Agora você pode ver isso na prática
-            </p>
-            <p
-              className="leading-relaxed mb-8"
-              style={{ fontSize: "0.88rem", color: "var(--cream-muted)" }}
-            >
-              Acesse a avaliação e identifique os pontos críticos no atendimento.
-            </p>
-            <a
-              href="/pesquisa"
-              className="btn-gold"
-              style={{ display: "inline-block", textAlign: "center", width: "100%" }}
-            >
-              Avaliar agora
-            </a>
-          </div>
-
+              <p
+                className="mb-4"
+                style={{ fontSize: "1.5rem", color: "var(--gold)", opacity: 0.7 }}
+              >
+                {p.icon}
+              </p>
+              <h3
+                className="mb-4 tracking-widest text-sm font-medium"
+                style={{ color: "var(--cream)" }}
+              >
+                {p.title}
+              </h3>
+              <p
+                className="leading-relaxed text-sm"
+                style={{ color: "var(--cream-muted)" }}
+              >
+                {p.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

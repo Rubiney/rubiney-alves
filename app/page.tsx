@@ -2,6 +2,7 @@ import Nav from "./components/Nav";
 import Hero from "./components/Hero";
 import Sobre from "./components/Sobre";
 import Pilares from "./components/Pilares";
+import Aplicacao from "./components/Aplicacao";
 import Experiencia from "./components/Experiencia";
 import Formacao from "./components/Formacao";
 import Artigos from "./components/Artigos";
@@ -15,6 +16,7 @@ export default function Home() {
         <Hero />
         <Sobre />
         <Pilares />
+        <Aplicacao />
         <Experiencia />
         <Formacao />
         <Artigos />
