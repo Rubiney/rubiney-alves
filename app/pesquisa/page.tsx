@@ -46,7 +46,7 @@ const agora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', mi
 type Notas = Record<string, number>
 
 interface FormFisica {
-  drogaria: string; bairro: string
+  drogaria: string; bairro: string; telefone: string
   dataAtendimento: string; horaAtendimento: string
   horarioVisita: string; movimentoLoja: string
   nps: number
@@ -54,6 +54,9 @@ interface FormFisica {
   ticketAlto: string; notaCusto: number
   maisde3med: string
   disponivel: string; notaDisponib: number
+  atendidoFarm: string
+  farmExplicou: string; farmConhecimento: number
+  farmSeguro: string; farmInteresse: string
 }
 
 interface FormDigital {
@@ -131,11 +134,13 @@ export default function Pesquisa() {
 
 function FormFisicaComp() {
   const [form, setForm] = useState<FormFisica>({
-    drogaria: '', bairro: '', dataAtendimento: '', horaAtendimento: '',
+    drogaria: '', bairro: '', telefone: '', dataAtendimento: '', horaAtendimento: '',
     horarioVisita: '', movimentoLoja: '', nps: -1,
     notas: {}, problema: '', observacoes: '',
     ticketAlto: '', notaCusto: 0,
     maisde3med: '', disponivel: '', notaDisponib: 0,
+    atendidoFarm: '', farmExplicou: '', farmConhecimento: 0,
+    farmSeguro: '', farmInteresse: '',
   })
   const [enviado, setEnviado]     = useState(false)
   const [enviando, setEnviando]   = useState(false)
@@ -210,6 +215,18 @@ function FormFisicaComp() {
           <input style={s.input} required placeholder="Ex: Central"
             value={form.bairro} onChange={e => set('bairro', e.target.value)} />
         </Campo>
+        <Campo label="Celular para contato (opcional)">
+          <input style={s.input} placeholder="(96) 9 0000-0000" maxLength={16}
+            value={form.telefone}
+            onChange={e => {
+              let v = e.target.value.replace(/\D/g,'')
+              if (v.length > 0)  v = '(' + v
+              if (v.length > 3)  v = v.slice(0,3) + ') ' + v.slice(3)
+              if (v.length > 10) v = v.slice(0,10) + ' ' + v.slice(10)
+              if (v.length > 15) v = v.slice(0,15) + '-' + v.slice(15)
+              set('telefone', v)
+            }} />
+        </Campo>
         <div style={{ display: 'flex', gap: 12 }}>
           <Campo label="Data da visita">
             <input style={{ ...s.input, textAlign: 'center' }} placeholder="DD/MM/AAAA" maxLength={10}
@@ -258,6 +275,55 @@ function FormFisicaComp() {
           <p style={{ ...s.hint, fontWeight: 600, marginTop: 4,
             color: form.nps >= 9 ? '#4ade80' : form.nps >= 7 ? '#facc15' : '#f87171' }}>
             {form.nps >= 9 ? '😊 Promotor — você adorou!' : form.nps >= 7 ? '😐 Neutro — satisfeito, mas não encantado.' : '😞 Detrator — algo precisa melhorar.'}
+          </p>
+        )}
+      </Secao>
+
+      {/* BLOCO 3 — Atendimento Farmacêutico */}
+      <Secao label="Bloco 3 · Atendimento Farmacêutico">
+        <Campo label="Você foi atendido por um farmacêutico?">
+          <RadioGroup value={form.atendidoFarm} onChange={v => set('atendidoFarm', v)}
+            options={[{ value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' }]} />
+        </Campo>
+
+        {form.atendidoFarm === 'sim' && (<>
+          <Campo label="O farmacêutico explicou corretamente o uso do medicamento?">
+            <RadioGroup value={form.farmExplicou} onChange={v => set('farmExplicou', v)}
+              options={[
+                { value: 'sim',     label: 'Sim, totalmente' },
+                { value: 'parcial', label: 'Parcialmente'    },
+                { value: 'nao',     label: 'Não'             },
+              ]} />
+          </Campo>
+
+          <Campo label="Demonstrou conhecimento técnico?">
+            <EstrelasRow label="" value={form.farmConhecimento}
+              onChange={v => set('farmConhecimento', v)}
+              desc={['Muito ruim','Ruim','Regular','Bom','Excelente']} />
+          </Campo>
+
+          <Campo label="Você se sentiu seguro com a orientação?">
+            <RadioGroup value={form.farmSeguro} onChange={v => set('farmSeguro', v)}
+              options={[
+                { value: 'sim',          label: 'Sim'          },
+                { value: 'parcialmente', label: 'Parcialmente' },
+                { value: 'nao',          label: 'Não'          },
+              ]} />
+          </Campo>
+
+          <Campo label="Demonstrou interesse pela sua saúde?">
+            <RadioGroup value={form.farmInteresse} onChange={v => set('farmInteresse', v)}
+              options={[
+                { value: 'sim',   label: 'Sim'   },
+                { value: 'pouco', label: 'Pouco' },
+                { value: 'nao',   label: 'Não'   },
+              ]} />
+          </Campo>
+        </>)}
+
+        {form.atendidoFarm === 'nao' && (
+          <p style={{ ...s.hint, color: '#5a6a88', marginTop: 8 }}>
+            Bloco 3 não se aplica. Continue para o próximo bloco.
           </p>
         )}
       </Secao>
