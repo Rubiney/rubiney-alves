@@ -75,17 +75,10 @@ interface FormDigital {
   checkout: string; prazo: string; atendimento: string; influenciou: string
 }
 
-interface FormFarmaceutico {
-  drogaria: string; dataAtendimento: string; horaAtendimento: string
-  identificacao: number; clareza: number
-  interacoes: string; privacidade: string
-  conhecimento: number; seguranca: number; observacoes: string
-}
-
 // ─── Página principal ────────────────────────────────────────────────────────
 
 export default function Pesquisa() {
-  const [tipo, setTipo] = useState<'fisica' | 'digital' | 'farmaceutico'>('fisica')
+  const [tipo, setTipo] = useState<'fisica' | 'digital'>('fisica')
 
   return (
     <>
@@ -103,15 +96,13 @@ export default function Pesquisa() {
 
         <div style={s.toggleWrap}>
           <div style={s.toggleRow}>
-            <Tbtn label="🏪 Loja Física"   ativo={tipo==='fisica'}      onClick={()=>setTipo('fisica')} />
-            <Tbtn label="🛒 E-commerce"    ativo={tipo==='digital'}     onClick={()=>setTipo('digital')} />
+            <Tbtn label="🏪 Loja Física"  ativo={tipo==='fisica'}  onClick={()=>setTipo('fisica')} />
+            <Tbtn label="🛒 E-commerce"   ativo={tipo==='digital'} onClick={()=>setTipo('digital')} />
           </div>
-          <Tbtn label="💊 Atendimento Farmacêutico" ativo={tipo==='farmaceutico'} onClick={()=>setTipo('farmaceutico')} full />
         </div>
 
-        {tipo === 'fisica'       && <FormFisicaComp />}
-        {tipo === 'digital'      && <FormDigitalComp />}
-        {tipo === 'farmaceutico' && <FormFarmaceuticoComp />}
+        {tipo === 'fisica'  && <FormFisicaComp />}
+        {tipo === 'digital' && <FormDigitalComp />}
       </div>
     </>
   )
@@ -143,7 +134,7 @@ function FormFisicaComp() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (form.nps < 0)    { setErro('Responda o NPS (0–10) antes de enviar.'); return }
-    if (!notasCompletas) { setErro('Avalie todos os critérios do Bloco 2.'); return }
+    if (!notasCompletas) { setErro('Avalie todos os critérios de Experiência de Loja.'); return }
     setErro(''); setEnviando(true)
     try {
       const res = await fetch('/api/pesquisa', {
@@ -192,7 +183,7 @@ function FormFisicaComp() {
       </div>
 
       {/* BLOCO 0 */}
-      <Secao label="Bloco 0 · Identificação da Visita">
+      <Secao label="Identificação da Visita">
         <Campo label="Nome da drogaria (opcional)">
           <input style={s.input} placeholder="Nome, cor, slogan, esquina com..."
             value={form.drogaria} onChange={e=>set('drogaria',e.target.value)} />
@@ -246,7 +237,7 @@ function FormFisicaComp() {
       </Secao>
 
       {/* BLOCO 1 */}
-      <Secao label="Bloco 1 · Recomendação (NPS)">
+      <Secao label="Recomendação (NPS)">
         <Campo label="De 0 a 10, o quanto você recomendaria esta drogaria? *">
           <NpsBtns value={form.nps} onChange={v=>set('nps',v)} />
         </Campo>
@@ -258,7 +249,7 @@ function FormFisicaComp() {
       </Secao>
 
       {/* BLOCO 2 */}
-      <Secao label="Bloco 2 · Experiência de Loja">
+      <Secao label="Experiência de Loja">
         <p style={s.hint}>Toque nas estrelas · o rótulo aparece abaixo</p>
         {CRITERIOS_B2.map(c=>(
           <Estrelas key={c.key} label={c.label} desc={c.desc}
@@ -267,7 +258,7 @@ function FormFisicaComp() {
       </Secao>
 
       {/* BLOCO 3 */}
-      <Secao label="Bloco 3 · Atendimento Farmacêutico">
+      <Secao label="Atendimento Farmacêutico">
         <Campo label="Você foi atendido por um farmacêutico?">
           <Rbtn value={form.atendidoFarm} onChange={v=>set('atendidoFarm',v)}
             opts={[{v:'sim',l:'Sim'},{v:'nao',l:'Não'}]} />
@@ -293,12 +284,12 @@ function FormFisicaComp() {
           </div>
         )}
         {form.atendidoFarm==='nao' && (
-          <p style={{...s.hint,color:'#5a6a88',marginTop:8}}>Bloco 3 não se aplica. Continue abaixo.</p>
+          <p style={{...s.hint,color:'#5a6a88',marginTop:8}}>Não se aplica. Continue abaixo.</p>
         )}
       </Secao>
 
       {/* BLOCO 4 */}
-      <Secao label="Bloco 4 · Serviços Farmacêuticos">
+      <Secao label="Serviços Farmacêuticos">
         <Campo label="Utilizou algum serviço (injeção, PA, glicemia)?">
           <Rbtn value={form.utilizouServico} onChange={v=>set('utilizouServico',v)}
             opts={[{v:'sim',l:'Sim'},{v:'nao',l:'Não'}]} />
@@ -332,12 +323,12 @@ function FormFisicaComp() {
           </div>
         )}
         {form.utilizouServico==='nao' && (
-          <p style={{...s.hint,color:'#5a6a88',marginTop:8}}>Bloco 4 não se aplica. Continue abaixo.</p>
+          <p style={{...s.hint,color:'#5a6a88',marginTop:8}}>Não se aplica. Continue abaixo.</p>
         )}
       </Secao>
 
       {/* BLOCO 5 */}
-      <Secao label="Bloco 5 · Diagnóstico Final">
+      <Secao label="Diagnóstico Final">
         <Campo label="Principal problema observado:">
           <select style={s.select} value={form.problema} onChange={e=>set('problema',e.target.value)}>
             <option value="">Selecione...</option>
@@ -489,124 +480,6 @@ function FormDigitalComp() {
             placeholder="Conte o que fez diferença — positivo ou negativo..."
             value={form.influenciou} onChange={e=>set('influenciou',e.target.value)} />
         </Campo>
-      </Secao>
-
-      {erro && <p style={s.erro}>{erro}</p>}
-      <button type="submit"
-        style={{...s.btn,opacity:enviando?0.7:1,cursor:enviando?'not-allowed':'pointer'}}
-        disabled={enviando}>
-        {enviando?'Enviando...':'Enviar Avaliação'}
-      </button>
-    </form>
-  )
-}
-
-// ─── Formulário Farmacêutico ─────────────────────────────────────────────────
-
-function FormFarmaceuticoComp() {
-  const [form, setForm] = useState<FormFarmaceutico>({
-    drogaria:'', dataAtendimento:'', horaAtendimento:'',
-    identificacao:0, clareza:0, interacoes:'', privacidade:'',
-    conhecimento:0, seguranca:0, observacoes:'',
-  })
-  const [enviado, setEnviado]   = useState(false)
-  const [enviando, setEnviando] = useState(false)
-  const [erro, setErro]         = useState('')
-
-  const set = (k: keyof FormFarmaceutico, v: string | number) => setForm(f=>({...f,[k]:v}))
-  const ns = [form.identificacao,form.clareza,form.conhecimento,form.seguranca]
-  const media = ns.every(n=>n>0) ? ns.reduce((a,b)=>a+b,0)/4 : 0
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!ns.every(n=>n>0)) { setErro('Avalie todos os critérios antes de enviar.'); return }
-    setErro(''); setEnviando(true)
-    try {
-      const res = await fetch('/api/pesquisa', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({...form, tipo:'farmaceutico', data:hoje(), horaResposta:agora()}),
-      })
-      if (!res.ok) throw new Error()
-      setEnviado(true)
-    } catch { setErro('Erro ao enviar. Tente novamente.') }
-    setEnviando(false)
-  }
-
-  if (enviado) {
-    const { texto, cor } = msgMedia(media)
-    return (
-      <div style={s.thanks}>
-        <div style={s.thanksBadge}>✓</div>
-        <h2 style={s.thanksTitle}>Avaliação registrada!</h2>
-        <div style={s.scoreBox}>
-          <p style={{...s.scoreMsg,color:cor}}>{texto}</p>
-          <div style={s.scorStars}>
-            {[1,2,3,4,5].map(n=>(
-              <span key={n} style={{fontSize:28,color:n<=Math.round(media)?'#C9A84C':'#1e2e50'}}>★</span>
-            ))}
-          </div>
-          <p style={s.scoreNum}>{media.toFixed(1)} / 5.0</p>
-        </div>
-        <p style={s.thanksText}>Obrigado pela participação.</p>
-        <p style={s.thanksSmall}>Atendimento Farmacêutico · Macapá–AP</p>
-        <a href="https://rubiney-alves.vercel.app" style={s.backLink}>← Rubiney Alves</a>
-      </div>
-    )
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <Secao label="Identificação">
-        <Campo label="Farmácia (opcional)">
-          <input style={s.input} placeholder="Nome, cor, slogan, esquina com..."
-            value={form.drogaria} onChange={e=>set('drogaria',e.target.value)} />
-        </Campo>
-        <div style={{display:'flex',gap:12}}>
-          <Campo label="Data">
-            <input style={{...s.input,textAlign:'center'}} placeholder="DD/MM/AAAA" maxLength={10}
-              value={form.dataAtendimento}
-              onChange={e=>{
-                let v=e.target.value.replace(/\D/g,'')
-                if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2)
-                if(v.length>5) v=v.slice(0,5)+'/'+v.slice(5)
-                set('dataAtendimento',v)
-              }} />
-          </Campo>
-          <Campo label="Horário">
-            <input style={{...s.input,textAlign:'center'}} placeholder="HH:MM" maxLength={5}
-              value={form.horaAtendimento}
-              onChange={e=>{
-                let v=e.target.value.replace(/\D/g,'')
-                if(v.length>2) v=v.slice(0,2)+':'+v.slice(2)
-                set('horaAtendimento',v)
-              }} />
-          </Campo>
-        </div>
-      </Secao>
-
-      <Secao label="Avaliação do Atendimento">
-        <p style={s.hint}>1 = péssimo · 5 = excelente</p>
-        <Estrelas label="Identificação e disponibilidade" value={form.identificacao} onChange={v=>set('identificacao',v)} desc={['Muito ruim','Ruim','Regular','Bom','Excelente']} />
-        <Estrelas label="Clareza das orientações" value={form.clareza} onChange={v=>set('clareza',v)} desc={['Muito ruim','Ruim','Regular','Boa','Excelente']} />
-        <Estrelas label="Conhecimento técnico" value={form.conhecimento} onChange={v=>set('conhecimento',v)} desc={['Muito ruim','Ruim','Regular','Bom','Excelente']} />
-        <Estrelas label="Segurança transmitida" value={form.seguranca} onChange={v=>set('seguranca',v)} desc={['Muito ruim','Ruim','Regular','Boa','Excelente']} />
-      </Secao>
-
-      <Secao label="Conduta Técnica">
-        <Campo label="Verificaram interações medicamentosas?">
-          <Rbtn value={form.interacoes} onChange={v=>set('interacoes',v)}
-            opts={[{v:'sim',l:'Sim'},{v:'nao',l:'Não'},{v:'na',l:'Não se aplica'}]} />
-        </Campo>
-        <Campo label="Sua privacidade foi respeitada?">
-          <Rbtn value={form.privacidade} onChange={v=>set('privacidade',v)}
-            opts={[{v:'sim',l:'Sim'},{v:'parcialmente',l:'Parcialmente'},{v:'nao',l:'Não'}]} />
-        </Campo>
-      </Secao>
-
-      <Secao label="Observações">
-        <textarea style={s.textarea} rows={4}
-          placeholder="Descreva sua experiência com o atendimento farmacêutico..."
-          value={form.observacoes} onChange={e=>set('observacoes',e.target.value)} />
       </Secao>
 
       {erro && <p style={s.erro}>{erro}</p>}
