@@ -51,6 +51,8 @@ type Notas = Record<string, number>
 interface FormFisica {
   drogaria: string; bairro: string
   dataAtendimento: string; horaAtendimento: string
+  horarioVisita: string; movimentoLoja: string
+  nps: number
   notas: Notas; problema: string; observacoes: string
   ticketAlto: string; notaCusto: number
   maisde3med: string
@@ -133,6 +135,7 @@ export default function Pesquisa() {
 function FormFisicaComp() {
   const [form, setForm] = useState<FormFisica>({
     drogaria: '', bairro: '', dataAtendimento: '', horaAtendimento: '',
+    horarioVisita: '', movimentoLoja: '', nps: -1,
     notas: {}, problema: '', observacoes: '',
     ticketAlto: '', notaCusto: 0,
     maisde3med: '', disponivel: '', notaDisponib: 0,
@@ -152,6 +155,7 @@ function FormFisicaComp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (form.nps < 0)    { setErro('Responda a pergunta de recomendação (0–10).'); return }
     if (!notasCompletas) { setErro('Avalie todos os critérios antes de enviar.'); return }
     setErro(''); setEnviando(true)
     try {
@@ -198,14 +202,19 @@ function FormFisicaComp() {
         <p style={s.progressText}>{preenchidos} de {CRITERIOS.length} critérios avaliados{notasCompletas ? ' ✓' : ''}</p>
       </div>
 
-      <Secao label="Identificação da Farmácia">
-        <Campo label="Como identificar a farmácia? (opcional)">
+      {/* BLOCO 0 — Identificação da Visita */}
+      <Secao label="Bloco 0 · Identificação da Visita">
+        <Campo label="Nome da drogaria (opcional)">
           <input style={s.input} placeholder="Nome, cor, slogan, esquina com..."
             value={form.drogaria} onChange={e => set('drogaria', e.target.value)} />
         </Campo>
         <p style={s.hint}>Ex: farmácia verde · "Saúde é tudo" · esquina da Av. FAB com Rua Cândido Mendes</p>
+        <Campo label="Bairro *">
+          <input style={s.input} required placeholder="Ex: Central"
+            value={form.bairro} onChange={e => set('bairro', e.target.value)} />
+        </Campo>
         <div style={{ display: 'flex', gap: 12 }}>
-          <Campo label="Data do atendimento">
+          <Campo label="Data da visita">
             <input style={{ ...s.input, textAlign: 'center' }} placeholder="DD/MM/AAAA" maxLength={10}
               value={form.dataAtendimento}
               onChange={e => {
@@ -225,10 +234,35 @@ function FormFisicaComp() {
               }} />
           </Campo>
         </div>
-        <Campo label="Bairro *">
-          <input style={s.input} required placeholder="Ex: Central"
-            value={form.bairro} onChange={e => set('bairro', e.target.value)} />
+        <Campo label="Período da visita">
+          <RadioGroup value={form.horarioVisita} onChange={v => set('horarioVisita', v)}
+            options={[
+              { value: 'manha', label: '🌅 Manhã'  },
+              { value: 'tarde', label: '☀️ Tarde'  },
+              { value: 'noite', label: '🌙 Noite'  },
+            ]} />
         </Campo>
+        <Campo label="Movimento da loja">
+          <RadioGroup value={form.movimentoLoja} onChange={v => set('movimentoLoja', v)}
+            options={[
+              { value: 'baixo', label: 'Baixo'  },
+              { value: 'medio', label: 'Médio'  },
+              { value: 'alto',  label: 'Alto'   },
+            ]} />
+        </Campo>
+      </Secao>
+
+      {/* BLOCO 1 — NPS */}
+      <Secao label="Bloco 1 · Recomendação (NPS)">
+        <Campo label="De 0 a 10, o quanto você recomendaria esta drogaria? *">
+          <NpsButtons value={form.nps} onChange={v => set('nps', v)} />
+        </Campo>
+        {form.nps >= 0 && (
+          <p style={{ ...s.hint, fontWeight: 600, marginTop: 4,
+            color: form.nps >= 9 ? '#4ade80' : form.nps >= 7 ? '#facc15' : '#f87171' }}>
+            {form.nps >= 9 ? '😊 Promotor — você adorou!' : form.nps >= 7 ? '😐 Neutro — satisfeito, mas não encantado.' : '😞 Detrator — algo precisa melhorar.'}
+          </p>
+        )}
       </Secao>
 
       <Secao label="Perfil de Compra">
@@ -616,6 +650,27 @@ function RadioGroup({ value, onChange, options }: {
             fontWeight: value === o.value ? 700 : 400,
           }}>
           {o.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function NpsButtons({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const cor = (n: number) => n >= 9 ? '#4ade80' : n >= 7 ? '#facc15' : '#f87171'
+  return (
+    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+      {[0,1,2,3,4,5,6,7,8,9,10].map(n => (
+        <button key={n} type="button" onClick={() => onChange(n)}
+          style={{
+            width: 42, height: 42, borderRadius: 8, border: 'none',
+            fontSize: 15, fontWeight: 700, cursor: 'pointer',
+            background: value === n ? cor(n) : '#0a1428',
+            color:      value === n ? '#0D1B3E' : '#5a6a88',
+            outline:    value === n ? `2px solid ${cor(n)}` : '1px solid #1e2e50',
+            transition: 'all 0.15s',
+          }}>
+          {n}
         </button>
       ))}
     </div>
