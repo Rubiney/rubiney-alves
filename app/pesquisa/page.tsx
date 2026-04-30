@@ -80,7 +80,7 @@ function msgMedia(m: number) {
 // ─── Página principal ───────────────────────────────────────────────────────
 
 export default function Pesquisa() {
-  const [tipo, setTipo] = useState<'fisica' | 'digital'>('fisica')
+  const [tipo, setTipo] = useState<'fisica' | 'digital' | 'farmaceutico'>('fisica')
 
   return (
     <>
@@ -98,23 +98,30 @@ export default function Pesquisa() {
           <p style={s.author}>Rubiney Alves · {hoje()} · {agora()}</p>
         </div>
 
-        {/* Toggle Física / Digital */}
-        <div style={s.toggle}>
+        {/* Toggle */}
+        <div style={s.toggleWrap}>
+          <div style={s.toggle}>
+            <button type="button"
+              style={{ ...s.toggleBtn, ...(tipo === 'fisica' ? s.toggleAtivo : {}) }}
+              onClick={() => setTipo('fisica')}>
+              🏪 Loja Física
+            </button>
+            <button type="button"
+              style={{ ...s.toggleBtn, ...(tipo === 'digital' ? s.toggleAtivo : {}) }}
+              onClick={() => setTipo('digital')}>
+              🛒 E-commerce
+            </button>
+          </div>
           <button type="button"
-            style={{ ...s.toggleBtn, ...(tipo === 'fisica' ? s.toggleAtivo : {}) }}
-            onClick={() => setTipo('fisica')}>
-            🏪 Loja Física
-          </button>
-          <button type="button"
-            style={{ ...s.toggleBtn, ...(tipo === 'digital' ? s.toggleAtivo : {}) }}
-            onClick={() => setTipo('digital')}>
-            🛒 E-commerce
+            style={{ ...s.toggleBtnFull, ...(tipo === 'farmaceutico' ? s.toggleAtivo : {}) }}
+            onClick={() => setTipo('farmaceutico')}>
+            💊 Atendimento Farmacêutico
           </button>
         </div>
 
-        {tipo === 'fisica'
-          ? <FormFisicaComp />
-          : <FormDigitalComp />}
+        {tipo === 'fisica'      && <FormFisicaComp />}
+        {tipo === 'digital'     && <FormDigitalComp />}
+        {tipo === 'farmaceutico'&& <FormFarmaceuticoComp />}
 
       </div>
     </>
@@ -426,6 +433,157 @@ function FormDigitalComp() {
   )
 }
 
+// ─── Formulário Farmacêutico ────────────────────────────────────────────────
+
+interface FormFarmaceutico {
+  drogaria: string
+  dataAtendimento: string; horaAtendimento: string
+  identificacao: number
+  clareza: number
+  interacoes: string
+  privacidade: string
+  conhecimento: number
+  seguranca: number
+  observacoes: string
+}
+
+function FormFarmaceuticoComp() {
+  const [form, setForm] = useState<FormFarmaceutico>({
+    drogaria: '', dataAtendimento: '', horaAtendimento: '',
+    identificacao: 0, clareza: 0,
+    interacoes: '', privacidade: '',
+    conhecimento: 0, seguranca: 0,
+    observacoes: '',
+  })
+  const [enviado, setEnviado]   = useState(false)
+  const [enviando, setEnviando] = useState(false)
+  const [erro, setErro]         = useState('')
+
+  const set = (k: keyof FormFarmaceutico, v: string | number) =>
+    setForm(f => ({ ...f, [k]: v }))
+
+  const notasEstrela = [form.identificacao, form.clareza, form.conhecimento, form.seguranca]
+  const notasPreench = notasEstrela.filter(n => n > 0).length
+  const media = notasPreench === 4
+    ? (notasEstrela.reduce((a, b) => a + b, 0) / 4)
+    : 0
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (notasPreench < 4) { setErro('Avalie todos os critérios com estrelas antes de enviar.'); return }
+    setErro(''); setEnviando(true)
+    try {
+      const res = await fetch('/api/pesquisa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, tipo: 'farmaceutico', data: hoje(), horaResposta: agora() }),
+      })
+      if (!res.ok) throw new Error()
+      setEnviado(true)
+    } catch { setErro('Erro ao enviar. Tente novamente.') }
+    setEnviando(false)
+  }
+
+  if (enviado) {
+    const { texto, cor } = msgMedia(media)
+    return (
+      <div style={s.thanks}>
+        <div style={s.thanksBadge}>✓</div>
+        <h2 style={s.thanksTitle}>Avaliação registrada!</h2>
+        <div style={s.scoreBox}>
+          <p style={{ ...s.scoreMsg, color: cor }}>{texto}</p>
+          <div style={s.scorStars}>
+            {[1,2,3,4,5].map(n => (
+              <span key={n} style={{ fontSize: 32, color: n <= Math.round(media) ? '#C9A84C' : '#1e2e50' }}>★</span>
+            ))}
+          </div>
+          <p style={s.scoreNum}>{media.toFixed(1)} / 5.0</p>
+        </div>
+        <p style={s.thanksText}>Obrigado pela sua participação.</p>
+        <p style={s.thanksSmall}>Atendimento Farmacêutico · Macapá–AP</p>
+        <a href="https://rubiney-alves.vercel.app" style={s.backLink}>← Rubiney Alves</a>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+
+      <Secao label="Identificação">
+        <Campo label="Farmácia (opcional)">
+          <input style={s.input} placeholder="Nome, cor, slogan, esquina com..."
+            value={form.drogaria} onChange={e => set('drogaria', e.target.value)} />
+        </Campo>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <Campo label="Data do atendimento">
+            <input style={{ ...s.input, textAlign: 'center' }} placeholder="DD/MM/AAAA" maxLength={10}
+              value={form.dataAtendimento}
+              onChange={e => {
+                let v = e.target.value.replace(/\D/g, '')
+                if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2)
+                if (v.length > 5) v = v.slice(0,5) + '/' + v.slice(5)
+                set('dataAtendimento', v)
+              }} />
+          </Campo>
+          <Campo label="Horário">
+            <input style={{ ...s.input, textAlign: 'center' }} placeholder="HH:MM" maxLength={5}
+              value={form.horaAtendimento}
+              onChange={e => {
+                let v = e.target.value.replace(/\D/g, '')
+                if (v.length > 2) v = v.slice(0,2) + ':' + v.slice(2)
+                set('horaAtendimento', v)
+              }} />
+          </Campo>
+        </div>
+      </Secao>
+
+      <Secao label="Avaliação do Atendimento Farmacêutico">
+        <p style={s.hint}>1 = péssimo · 5 = excelente</p>
+        <EstrelasRow label="Identificação e disponibilidade do farmacêutico"
+          value={form.identificacao} onChange={v => set('identificacao', v)} />
+        <EstrelasRow label="Clareza das orientações sobre o medicamento"
+          value={form.clareza} onChange={v => set('clareza', v)} />
+        <EstrelasRow label="Conhecimento técnico demonstrado"
+          value={form.conhecimento} onChange={v => set('conhecimento', v)} />
+        <EstrelasRow label="Segurança transmitida durante o atendimento"
+          value={form.seguranca} onChange={v => set('seguranca', v)} />
+      </Secao>
+
+      <Secao label="Conduta Técnica">
+        <Campo label="Foram verificadas possíveis interações medicamentosas?">
+          <RadioGroup value={form.interacoes} onChange={v => set('interacoes', v)}
+            options={[
+              { value: 'sim',        label: 'Sim' },
+              { value: 'nao',        label: 'Não' },
+              { value: 'nao_aplica', label: 'Não se aplica' },
+            ]} />
+        </Campo>
+        <Campo label="Sua privacidade foi respeitada durante o atendimento?">
+          <RadioGroup value={form.privacidade} onChange={v => set('privacidade', v)}
+            options={[
+              { value: 'sim',          label: 'Sim' },
+              { value: 'parcialmente', label: 'Parcialmente' },
+              { value: 'nao',          label: 'Não' },
+            ]} />
+        </Campo>
+      </Secao>
+
+      <Secao label="Observações">
+        <textarea style={s.textarea} rows={4}
+          placeholder="Descreva sua experiência com o atendimento farmacêutico..."
+          value={form.observacoes} onChange={e => set('observacoes', e.target.value)} />
+      </Secao>
+
+      {erro && <p style={s.erro}>{erro}</p>}
+      <button type="submit"
+        style={{ ...s.btn, opacity: enviando ? 0.7 : 1, cursor: enviando ? 'not-allowed' : 'pointer' }}
+        disabled={enviando}>
+        {enviando ? 'Enviando...' : 'Enviar Avaliação'}
+      </button>
+    </form>
+  )
+}
+
 // ─── Componentes compartilhados ─────────────────────────────────────────────
 
 function Secao({ label, children }: { label: string; children: React.ReactNode }) {
@@ -496,9 +654,11 @@ const s: Record<string, React.CSSProperties> = {
   title:    { fontSize: 24, fontWeight: 700, color: '#fff', margin: '0 0 6px' },
   subtitle: { fontSize: 14, color: '#8a9ab8', margin: '0 0 4px' },
   author:   { fontSize: 12, color: '#4a5a78' },
-  toggle:   { display: 'flex', gap: 0, marginBottom: 28, borderRadius: 10, overflow: 'hidden', border: '1px solid #1e2e50' },
-  toggleBtn:  { flex: 1, padding: '12px 8px', background: '#0a1428', color: '#8a9ab8', border: 'none', fontSize: 14, cursor: 'pointer', transition: 'all 0.2s' },
-  toggleAtivo:{ background: '#C9A84C', color: '#0D1B3E', fontWeight: 700 },
+  toggleWrap:   { marginBottom: 28, display: 'flex', flexDirection: 'column', gap: 0, borderRadius: 10, overflow: 'hidden', border: '1px solid #1e2e50' },
+  toggle:       { display: 'flex' },
+  toggleBtn:    { flex: 1, padding: '12px 8px', background: '#0a1428', color: '#8a9ab8', border: 'none', borderBottom: '1px solid #1e2e50', fontSize: 14, cursor: 'pointer', transition: 'all 0.2s' },
+  toggleBtnFull:{ width: '100%', padding: '12px 8px', background: '#0a1428', color: '#8a9ab8', border: 'none', fontSize: 14, cursor: 'pointer', transition: 'all 0.2s' },
+  toggleAtivo:  { background: '#C9A84C', color: '#0D1B3E', fontWeight: 700 },
   progressWrap: { marginBottom: 24 },
   progressBar:  { height: 6, background: '#0e1c36', borderRadius: 99, overflow: 'hidden', marginBottom: 6 },
   progressFill: { height: '100%', background: '#C9A84C', borderRadius: 99, transition: 'width 0.3s ease' },
