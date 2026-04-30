@@ -4,15 +4,12 @@ import { useState } from 'react'
 
 // ─── Pesquisa Física ────────────────────────────────────────────────────────
 
-const CRITERIOS = [
-  { key: 'tempo',        label: 'Tempo de atendimento' },
-  { key: 'cordialidade', label: 'Cordialidade' },
-  { key: 'conhecimento', label: 'Conhecimento do atendente' },
-  { key: 'organizacao',  label: 'Organização da loja' },
-  { key: 'limpeza',      label: 'Limpeza' },
-  { key: 'facilidade',   label: 'Facilidade de encontrar produtos' },
-  { key: 'clareza',      label: 'Clareza nas informações' },
-  { key: 'geral',        label: 'Nota geral da experiência' },
+const CRITERIOS_B2 = [
+  { key: 'tempo',        label: 'Tempo de atendimento',            desc: ['Muito demorado','Demorado','Regular','Rápido','Muito rápido'] },
+  { key: 'cordialidade', label: 'Cordialidade no atendimento',     desc: ['Muito ruim','Ruim','Regular','Boa','Excelente'] },
+  { key: 'organizacao',  label: 'Organização da loja',             desc: ['Muito desorganizada','Desorganizada','Regular','Organizada','Muito organizada'] },
+  { key: 'limpeza',      label: 'Limpeza da loja',                 desc: ['Muito suja','Suja','Regular','Limpa','Muito limpa'] },
+  { key: 'facilidade',   label: 'Facilidade de encontrar produtos', desc: ['Muito difícil','Difícil','Regular','Fácil','Muito fácil'] },
 ]
 
 const PROBLEMAS = [
@@ -69,7 +66,7 @@ interface FormDigital {
 }
 
 function mediaNotas(notas: Notas) {
-  const v = CRITERIOS.map(c => notas[c.key] || 0).filter(x => x > 0)
+  const v = CRITERIOS_B2.map(c => notas[c.key] || 0).filter(x => x > 0)
   return v.length ? v.reduce((a, b) => a + b, 0) / v.length : 0
 }
 
@@ -150,8 +147,8 @@ function FormFisicaComp() {
   const setNota = (key: string, val: number) =>
     setForm(f => ({ ...f, notas: { ...f.notas, [key]: val } }))
 
-  const preenchidos    = CRITERIOS.filter(c => form.notas[c.key]).length
-  const notasCompletas = preenchidos === CRITERIOS.length
+  const preenchidos    = CRITERIOS_B2.filter(c => form.notas[c.key]).length
+  const notasCompletas = preenchidos === CRITERIOS_B2.length
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -199,7 +196,7 @@ function FormFisicaComp() {
         <div style={s.progressBar}>
           <div style={{ ...s.progressFill, width: `${(preenchidos / CRITERIOS.length) * 100}%` }} />
         </div>
-        <p style={s.progressText}>{preenchidos} de {CRITERIOS.length} critérios avaliados{notasCompletas ? ' ✓' : ''}</p>
+        <p style={s.progressText}>{preenchidos} de {CRITERIOS_B2.length} critérios avaliados{notasCompletas ? ' ✓' : ''}</p>
       </div>
 
       {/* BLOCO 0 — Identificação da Visita */}
@@ -294,10 +291,11 @@ function FormFisicaComp() {
         )}
       </Secao>
 
-      <Secao label="Avaliação dos Critérios">
-        <p style={s.hint}>Toque nas estrelas · 1 = péssimo · 5 = excelente</p>
-        {CRITERIOS.map(c => (
-          <EstrelasRow key={c.key} label={c.label}
+      {/* BLOCO 2 — Experiência de Loja */}
+      <Secao label="Bloco 2 · Experiência de Loja">
+        <p style={s.hint}>Toque nas estrelas · o rótulo aparece abaixo de cada avaliação</p>
+        {CRITERIOS_B2.map(c => (
+          <EstrelasRow key={c.key} label={c.label} desc={c.desc}
             value={form.notas[c.key] || 0} onChange={v => setNota(c.key, v)} />
         ))}
       </Secao>
@@ -677,25 +675,33 @@ function NpsButtons({ value, onChange }: { value: number; onChange: (v: number) 
   )
 }
 
-function EstrelasRow({ label, value, onChange }: {
-  label: string; value: number; onChange: (v: number) => void
+function EstrelasRow({ label, value, onChange, desc }: {
+  label: string; value: number; onChange: (v: number) => void; desc?: string[]
 }) {
   const [hover, setHover]   = useState(0)
   const [pulsou, setPulsou] = useState(0)
   const click = (n: number) => { onChange(n); setPulsou(n); setTimeout(() => setPulsou(0), 260) }
+  const ativo = hover || value
   return (
-    <div style={label ? s.estrelasRow : { ...s.estrelasRow, borderBottom: 'none', paddingTop: 0 }}>
-      {label && <span style={s.estrelasLabel}>{label}</span>}
-      <div style={s.estrelas}>
-        {[1,2,3,4,5].map(n => (
-          <span key={n} className={pulsou === n ? 'estrela-ativa' : ''}
-            onClick={() => click(n)}
-            onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)}
-            style={{ ...s.estrela, color: n <= (hover || value) ? '#C9A84C' : '#1e2e50' }}>
-            ★
-          </span>
-        ))}
+    <div style={{ borderBottom: '1px solid #0e1c36', paddingBottom: 12, marginBottom: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10 }}>
+        {label && <span style={s.estrelasLabel}>{label}</span>}
+        <div style={s.estrelas}>
+          {[1,2,3,4,5].map(n => (
+            <span key={n} className={pulsou === n ? 'estrela-ativa' : ''}
+              onClick={() => click(n)}
+              onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)}
+              style={{ ...s.estrela, color: n <= ativo ? '#C9A84C' : '#1e2e50' }}>
+              ★
+            </span>
+          ))}
+        </div>
       </div>
+      {desc && ativo > 0 && (
+        <p style={{ margin: '4px 0 0', fontSize: 11, color: '#C9A84C', textAlign: 'right', fontStyle: 'italic' }}>
+          {desc[ativo - 1]}
+        </p>
+      )}
     </div>
   )
 }
