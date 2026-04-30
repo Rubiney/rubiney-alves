@@ -3,6 +3,7 @@ import Hero from "./components/Hero";
 import Sobre from "./components/Sobre";
 import Pilares from "./components/Pilares";
 import Aplicacao from "./components/Aplicacao";
+import Trajetoria from "./components/Trajetoria";
 import Experiencia from "./components/Experiencia";
 import Formacao from "./components/Formacao";
 import Artigos from "./components/Artigos";
@@ -17,6 +18,7 @@ export default function Home() {
         <Sobre />
         <Pilares />
         <Aplicacao />
+        <Trajetoria />
         <Experiencia />
         <Formacao />
         <Artigos />
