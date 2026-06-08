@@ -1,3 +1,5 @@
+"use client";
+
 const projetos = [
   {
     status: 'Em produção',
