@@ -2,14 +2,14 @@
 import { useState, useEffect } from "react";
 
 const links = [
-  { href: "#sobre",      label: "Sobre" },
-  { href: "#metodo",     label: "Método" },
-  { href: "#aplicacao",  label: "Aplicação" },
+  { href: "#sobre",       label: "Sobre" },
+  { href: "#projetos",    label: "Projetos" },
+  { href: "#metodo",      label: "Método" },
+  { href: "#aplicacao",   label: "Aplicação" },
   { href: "#trajetoria",  label: "Trajetória" },
   { href: "#experiencia", label: "Experiência" },
-  { href: "#fundamento", label: "Fundamento" },
-  { href: "#referencias",  label: "Referências" },
-  { href: "#ferramentas", label: "Ferramentas" },
+  { href: "#fundamento",  label: "Fundamento" },
+  { href: "#referencias", label: "Referências" },
   { href: "#contato",     label: "Contato" },
 ];
 

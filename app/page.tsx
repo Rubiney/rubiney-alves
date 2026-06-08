@@ -7,7 +7,7 @@ import Trajetoria from "./components/Trajetoria";
 import Experiencia from "./components/Experiencia";
 import Fundamento from "./components/Fundamento";
 import Referencias from "./components/Referencias";
-import Ferramentas from "./components/Ferramentas";
+import Projetos from "./components/Projetos";
 import Contato from "./components/Contato";
 
 export default function Home() {
@@ -17,13 +17,13 @@ export default function Home() {
       <main>
         <Hero />
         <Sobre />
+        <Projetos />
         <Pilares />
         <Aplicacao />
         <Trajetoria />
         <Experiencia />
         <Fundamento />
         <Referencias />
-        <Ferramentas />
         <Contato />
       </main>
     </>
