@@ -7,6 +7,7 @@ import Trajetoria from "./components/Trajetoria";
 import Experiencia from "./components/Experiencia";
 import Fundamento from "./components/Fundamento";
 import Referencias from "./components/Referencias";
+import Ferramentas from "./components/Ferramentas";
 import Contato from "./components/Contato";
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
         <Experiencia />
         <Fundamento />
         <Referencias />
+        <Ferramentas />
         <Contato />
       </main>
     </>

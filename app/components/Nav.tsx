@@ -8,8 +8,9 @@ const links = [
   { href: "#trajetoria",  label: "Trajetória" },
   { href: "#experiencia", label: "Experiência" },
   { href: "#fundamento", label: "Fundamento" },
-  { href: "#referencias", label: "Referências" },
-  { href: "#contato",    label: "Contato" },
+  { href: "#referencias",  label: "Referências" },
+  { href: "#ferramentas", label: "Ferramentas" },
+  { href: "#contato",     label: "Contato" },
 ];
 
 export default function Nav() {
