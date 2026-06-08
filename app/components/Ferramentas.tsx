@@ -1,19 +1,65 @@
-const ferramentas = [
-  {
-    tag: 'Posologia · Calculadora Clínica',
-    titulo: 'GuiaDose',
-    desc: '13 calculadoras de antibióticos — adulto e pediátrico — com doses baseadas em bula ANVISA. Desenvolvida para orientação precisa no ponto de venda e na prática clínica farmacêutica.',
-    cta: 'Acessar ferramenta',
-    href: 'https://guiadose.vercel.app/',
-  },
-  {
-    tag: 'Azitromicina · Calculadora Especializada',
-    titulo: 'AzitroCal',
-    desc: 'Calculadora específica para posologia de Azitromicina em adultos e crianças. Com regime de dose, link direto à bula ANVISA e opção de impressão para o ponto de venda.',
-    cta: 'Calcular posologia',
-    href: 'https://guiadose.vercel.app/azitromicina.html',
-  },
+const antibioticos = [
+  'Amoxicilina', 'Amoxicilina+Clavulanato', 'Azitromicina',
+  'Cefalexina', 'Cefadroxila', 'Cefaclor', 'Cefuroxima',
+  'Claritromicina', 'Ciprofloxacino', 'Doxiciclina',
+  'Metronidazol', 'Nitrofurantoína', 'Bactrim',
 ];
+
+const antipireticos = ['Ibuprofeno', 'Dipirona', 'Paracetamol'];
+
+function Chip({ label }: { label: string }) {
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        padding: '2px 8px',
+        fontSize: '0.62rem',
+        fontWeight: 500,
+        letterSpacing: '0.05em',
+        border: '1px solid rgba(232,160,32,0.25)',
+        color: 'var(--cream-muted)',
+        borderRadius: '2px',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+function ChipGroup({ label, items, maxVisible }: { label: string; items: string[]; maxVisible: number }) {
+  const visible = items.slice(0, maxVisible);
+  const hidden = items.length - maxVisible;
+  return (
+    <div className="mb-3">
+      <p
+        className="mb-2"
+        style={{ fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)', opacity: 0.6 }}
+      >
+        {label}
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {visible.map((item) => <Chip key={item} label={item} />)}
+        {hidden > 0 && (
+          <span
+            style={{
+              display: 'inline-block',
+              padding: '2px 8px',
+              fontSize: '0.62rem',
+              fontWeight: 600,
+              letterSpacing: '0.05em',
+              color: 'var(--gold)',
+              opacity: 0.7,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            +{hidden} mais
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function Ferramentas() {
   return (
@@ -45,53 +91,113 @@ export default function Ferramentas() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {ferramentas.map((f) => (
-            <a
-              key={f.titulo}
-              href={f.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col p-6"
-              style={{
-                backgroundColor: 'var(--navy-deep)',
-                borderTop: '3px solid var(--gold)',
-                textDecoration: 'none',
-                transition: 'opacity 0.2s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+
+          {/* Card GuiaDose — com chips */}
+          <a
+            href="https://guiadose.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col p-6"
+            style={{
+              backgroundColor: 'var(--navy-deep)',
+              borderTop: '3px solid var(--gold)',
+              textDecoration: 'none',
+              transition: 'opacity 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+          >
+            <p
+              className="text-xs font-medium tracking-widest uppercase mb-4"
+              style={{ color: 'var(--gold)', opacity: 0.75 }}
             >
-              <p
-                className="text-xs font-medium tracking-widest uppercase mb-4"
-                style={{ color: 'var(--gold)', opacity: 0.75 }}
-              >
-                {f.tag}
-              </p>
-              <h3
-                className="mb-3 leading-snug"
-                style={{
-                  fontFamily: 'var(--font-cormorant)',
-                  fontSize: '1.3rem',
-                  fontWeight: 600,
-                  color: 'var(--cream)',
-                }}
-              >
-                {f.titulo}
-              </h3>
-              <p
-                className="text-sm leading-relaxed mb-6 flex-1"
-                style={{ color: 'var(--cream-muted)' }}
-              >
-                {f.desc}
-              </p>
-              <span
-                className="text-xs tracking-widest uppercase"
-                style={{ color: 'var(--gold)' }}
-              >
-                {f.cta} →
-              </span>
-            </a>
-          ))}
+              Posologia · Calculadora Clínica
+            </p>
+            <h3
+              className="mb-3 leading-snug"
+              style={{
+                fontFamily: 'var(--font-cormorant)',
+                fontSize: '1.3rem',
+                fontWeight: 600,
+                color: 'var(--cream)',
+              }}
+            >
+              GuiaDose
+            </h3>
+            <p
+              className="text-sm leading-relaxed mb-5"
+              style={{ color: 'var(--cream-muted)' }}
+            >
+              Calculadora de posologia para adultos e crianças, com doses
+              baseadas em bula ANVISA — para orientação precisa no ponto de
+              venda e na prática clínica.
+            </p>
+
+            {/* Chips de medicamentos */}
+            <div
+              className="mb-6 p-4 flex-1"
+              style={{ backgroundColor: 'rgba(15,22,53,0.5)', borderLeft: '2px solid rgba(232,160,32,0.2)' }}
+            >
+              <ChipGroup label="Antibióticos" items={antibioticos} maxVisible={4} />
+              <ChipGroup label="Antipiréticos" items={antipireticos} maxVisible={3} />
+            </div>
+
+            <span
+              className="text-xs tracking-widest uppercase"
+              style={{ color: 'var(--gold)' }}
+            >
+              Acessar ferramenta →
+            </span>
+          </a>
+
+          {/* Card AzitroCal */}
+          <a
+            href="https://guiadose.vercel.app/azitromicina.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col p-6"
+            style={{
+              backgroundColor: 'var(--navy-deep)',
+              borderTop: '3px solid var(--gold)',
+              textDecoration: 'none',
+              transition: 'opacity 0.2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+          >
+            <p
+              className="text-xs font-medium tracking-widest uppercase mb-4"
+              style={{ color: 'var(--gold)', opacity: 0.75 }}
+            >
+              Azitromicina · Calculadora Especializada
+            </p>
+            <h3
+              className="mb-3 leading-snug"
+              style={{
+                fontFamily: 'var(--font-cormorant)',
+                fontSize: '1.3rem',
+                fontWeight: 600,
+                color: 'var(--cream)',
+              }}
+            >
+              AzitroCal
+            </h3>
+            <p
+              className="text-sm leading-relaxed mb-6 flex-1"
+              style={{ color: 'var(--cream-muted)' }}
+            >
+              Calculadora específica para posologia de Azitromicina em adultos
+              e crianças. Com regime de dose, link direto à bula ANVISA e opção
+              de impressão para o ponto de venda.
+            </p>
+            <span
+              className="text-xs tracking-widest uppercase"
+              style={{ color: 'var(--gold)' }}
+            >
+              Calcular posologia →
+            </span>
+          </a>
+
         </div>
       </div>
     </section>
